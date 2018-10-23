@@ -6,7 +6,7 @@ const ClubSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'users'
   },
-  name: {
+  clubName: {
     type: String,
     required: true
   },
@@ -19,7 +19,7 @@ const ClubSchema = new Schema({
   },
   members: [
     {
-      member: {
+      user: {
         type: Schema.Types.ObjectId,
         ref: 'users'
       },
