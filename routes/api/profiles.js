@@ -23,7 +23,7 @@ router.get('/test', (req, res) => res.json({ msg: 'Profile Works' }));
 router.get('/club', (req, res) => {
   const errors = {};
 
-  Profile.findOne({ club: req.club.id })
+  ClubProfile.findOne({ club: req.club.id })
     .populate('member', ['name', 'avatar', 'dateJoined'])
     .then(profile => {
       if (!profile) {

@@ -14,6 +14,10 @@ const UserSchema = new Schema({
     type: String,
     required: true
   },
+  isAdmin: {
+    type: Boolean,
+    default: false
+  },
   avatar: {
     type: String
   },
