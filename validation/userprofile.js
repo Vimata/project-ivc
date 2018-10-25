@@ -1,22 +1,17 @@
 const Validator = require('validator');
 const isEmpty = require('./is_empty');
 
-module.exports = function validateProfileInput(data) {
+module.exports = function validateUserProfileInput(data) {
   let errors = {};
 
-  data.handle = !isEmpty(data.handle) ? data.handle : '';
   data.role = !isEmpty(data.role) ? data.role : '';
-
-  if (!Validator.isLength(data.handle, { min: 2, max: 40 })) {
-    errors.handle = 'Handle must at least 2 characters';
-  }
-
-  if (Validator.isEmpty(data.handle)) {
-    errors.handle = 'Profile handle is required';
-  }
+  data.objective = !isEmpty(data.objective) ? data.objective : '';
 
   if (Validator.isEmpty(data.role)) {
     errors.role = 'Role is required';
+  }
+  if (Validator.isEmpty(data.objective)) {
+    errors.objective = 'Objective is required';
   }
 
   if (!isEmpty(data.twitter)) {

@@ -5,7 +5,6 @@ const passport = require('passport');
 
 //Club model
 const Club = require('../../models/Club');
-const ClubProfile = require('../../models/ClubProfile');
 
 //Validation
 const validateClubInput = require('../../validation/clubs');

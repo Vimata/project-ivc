@@ -10,12 +10,21 @@ const ClubSchema = new Schema({
     type: String,
     required: true
   },
-  avatar: {
-    type: String
-  },
-  CreatedOn: {
+  createdOn: {
     type: Date,
     default: Date.now
+  },
+  objective: {
+    type: String
+  },
+  website: {
+    type: String
+  },
+  location: {
+    type: String
+  },
+  status: {
+    type: String
   },
   members: [
     {
