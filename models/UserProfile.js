@@ -15,6 +15,12 @@ const UserProfileSchema = new Schema({
   bio: {
     type: String
   },
+  clubs: [
+    {
+      type: Schema.Types.ObjectId,
+      refs: 'clubs'
+    }
+  ],
   social: {
     twitter: {
       type: String

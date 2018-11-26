@@ -5,6 +5,7 @@ const passport = require('passport');
 
 //Club model
 const Club = require('../../models/Club');
+const UserProfile = require('../../models/UserProfile');
 
 //Validation
 const validateClubInput = require('../../validation/clubs');
@@ -41,7 +42,7 @@ router.get('/:id', (req, res) => {
 router.post(
   '/',
   passport.authenticate('jwt', { session: false }),
-  (req, res, club) => {
+  (req, res) => {
     const { errors, isValid } = validateClubInput(req.body);
     //Check validation
     if (!isValid) {
@@ -49,7 +50,7 @@ router.post(
       return res.status(400).json(errors);
     }
     Club.findOne({ clubName: req.body.clubName })
-      .then(club => {
+      .then((club, user) => {
         if (club) {
           errors.clubName = 'Club name already exists';
           return res.status(400).json(errors);
@@ -57,10 +58,12 @@ router.post(
         const newClub = new Club({
           clubName: req.body.clubName,
           avatar: req.body.avatar,
-          creator: req.user.id
+          creator: req.user.id,
+          objective: req.body.objective
         });
 
         if (newClub.clubName) newClub.members.unshift({ user: req.user.id });
+
         newClub.save().then(club => res.json(club));
       })
       .catch(err => console.log(err));
@@ -74,7 +77,7 @@ router.delete(
   '/:id',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    ClubProfile.findOne({ user: req.user.id }).then(profile => {
+    UserProfile.findOne({ user: req.user.id }).then(profile => {
       Club.findById(req.params.id)
         .then(club => {
           //Check for club owner
@@ -100,27 +103,31 @@ router.post(
   '/join/:id',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    ClubProfile.findOne({ user: req.user.id }).then(profile => {
-      Club.findById(req.params.id)
-        .then(club => {
-          if (
-            club.members.filter(
-              member => member.user.toString() === req.user.id
-            ).length > 0 ||
-            club.creator.toString === req.user.id
-          ) {
-            return res
-              .status(400)
-              .json({ alreadymember: 'You are already a member of this club' });
-          }
-          //Add user id to likes array
-          club.members.unshift({ user: req.user.id });
-          club.save().then(club => res.json(club));
-        })
-        .catch(err =>
-          res.status(404).json({ clubnotfound: 'Club was not found' })
-        );
-    });
+    UserProfile.findOne({ user: req.user.id })
+      .then(() => {
+        Club.findById(req.params.id)
+          .then(club => {
+            if (
+              club.members.filter(
+                member => member.user.toString() === req.user.id
+              ).length > 0 ||
+              club.creator.toString() === req.user.id
+            ) {
+              return res.status(400).json({
+                alreadymember: 'You are already a member of this club'
+              });
+            }
+            //Add user id to members array
+            club.members.unshift({ user: req.user.id });
+            club.save().then(club => res.json(club));
+          })
+          .catch(err =>
+            res.status(404).json({ clubnotfound: 'Club was not found' })
+          );
+      })
+      .catch(err =>
+        res.status(404).json({ profilenotfound: 'User profile was not found' })
+      );
   }
 );
 
@@ -131,7 +138,7 @@ router.post(
   '/leave/:id',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    ClubProfile.findOne({ user: req.user.id }).then(profile => {
+    UserProfile.findOne({ user: req.user.id }).then(profile => {
       Club.findById(req.params.id)
         .then(club => {
           if (

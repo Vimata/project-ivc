@@ -8,7 +8,8 @@ const ClubSchema = new Schema({
   },
   clubName: {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   createdOn: {
     type: Date,
@@ -24,7 +25,8 @@ const ClubSchema = new Schema({
     type: String
   },
   status: {
-    type: String
+    type: String,
+    enum: ['Active', 'Inactive', 'Suspended']
   },
   members: [
     {
