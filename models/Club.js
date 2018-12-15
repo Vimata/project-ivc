@@ -45,6 +45,179 @@ const ClubSchema = new Schema({
         default: Date.now
       }
     }
+  ],
+
+  memberAccounts: [
+    {
+      deposit: {
+        account: {
+          type: Schema.Types.ObjectId,
+          ref: 'account'
+        },
+        amount: {
+          type: String,
+          required: true
+        },
+        member: {
+          type: Schema.Types.ObjectId,
+          ref: 'users'
+        },
+        date: {
+          type: Date,
+          default: Date.now
+        },
+        transactionType: {
+          type: String,
+          default: 'Cash Deposit'
+        }
+      },
+      withdrawal: {
+        member: {
+          type: Schema.Types.ObjectId,
+          ref: 'users'
+        },
+        type: {
+          type: String,
+          enum: ['Full', 'Partial'],
+          default: 'Full',
+          required: true
+        },
+        announcementDate: {
+          type: Date,
+          default: Date.now
+        },
+        payoutDate: {
+          date: {
+            type: Date,
+            default: Date.now
+          }
+        },
+        transactionType: {
+          type: String,
+          default: 'Cash Withdrawal'
+        }
+      },
+      fee: {
+        account: {
+          type: Schema.Types.ObjectId,
+          ref: 'account'
+        },
+        amount: {
+          type: String,
+          required: true
+        },
+        member: {
+          type: Schema.Types.ObjectId,
+          ref: 'users'
+        },
+        date: {
+          type: Date,
+          default: Date.now
+        },
+        transactionType: {
+          type: String,
+          default: 'Expense'
+        }
+      },
+      beginBalance: {
+        units: {
+          type: String,
+          required: true
+        },
+        amount: {
+          type: String,
+          required: true
+        },
+        member: {
+          type: Schema.Types.ObjectId,
+          ref: 'users'
+        },
+        type: {
+          type: String,
+          enum: ['Paid In', 'Earnings'],
+          default: 'Paid In',
+          required: true
+        },
+        date: {
+          type: Date,
+          default: Date.now
+        }
+      }
+    }
+  ],
+  securities: [
+    {
+      buy: {
+        symbol: {
+          type: String,
+          required: true
+        },
+        numberOfSharesBought: {
+          type: String,
+          required: true
+        },
+        commission: {
+          type: Number
+        },
+        otherFees: {
+          type: Number
+        },
+        account: {
+          type: Schema.Types.ObjectId,
+          ref: 'account'
+        },
+        date: {
+          type: Date,
+          default: Date.now
+        },
+        transactionType: {
+          type: String,
+          default: 'Buy Security'
+        }
+      },
+      sell: {
+        symbol: {
+          type: String,
+          required: true
+        },
+        date: {
+          type: Date,
+          default: Date.now
+        },
+        numberOfSharesSold: {
+          type: String,
+          required: true
+        },
+        grossSellAmount: {
+          type: String,
+          required: true
+        },
+        commission: {
+          type: String
+        },
+        otherFees: {
+          type: String
+        },
+        netProceeds: {
+          type: String,
+          required: true
+        },
+        account: {
+          type: Schema.Types.ObjectId,
+          ref: 'account'
+        },
+        comments: {
+          type: String
+        },
+        reasonForSale: {
+          type: String
+        },
+        transactionType: {
+          type: String,
+          default: 'Sell Security'
+        }
+      }
+    }
   ]
 });
 

@@ -6,9 +6,12 @@ const passport = require('passport');
 //Club model
 const Club = require('../../models/Club');
 const UserProfile = require('../../models/UserProfile');
+const User = require('../../models/User');
+const CashAccount = require('../../models/CashAccount');
 
 //Validation
 const validateClubInput = require('../../validation/clubs');
+const validateCashAccountInput = require('../../validation/clubs');
 
 //@route  GET to api/clubs/test
 //@desc   Tests club route
@@ -30,6 +33,8 @@ router.get('/', (req, res) => {
 //@access Public
 router.get('/:id', (req, res) => {
   Club.findById(req.params.id)
+    .populate('creator', ['name', 'avatar', 'isAdmin'])
+    .populate('members.user', ['name', 'avatar', 'isAdmin'])
     .then(clubs => res.json(clubs))
     .catch(err =>
       res.status(404).json({ noclubfound: 'No club found with that ID' })
@@ -55,11 +60,14 @@ router.post(
           errors.clubName = 'Club name already exists';
           return res.status(400).json(errors);
         }
+        const creator = req.user.id;
+        creator.isAdmin = true;
         const newClub = new Club({
           clubName: req.body.clubName,
           avatar: req.body.avatar,
           creator: req.user.id,
-          objective: req.body.objective
+          objective: req.body.objective,
+          location: req.body.location
         });
 
         if (newClub.clubName) newClub.members.unshift({ user: req.user.id });
@@ -96,11 +104,11 @@ router.delete(
   }
 );
 
-//@route  POST to api/clubs/join/:id
+//@route  POST to api/clubs/:id/join
 //@desc   Join club
 //@access Private
 router.post(
-  '/join/:id',
+  '/:id/join',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     UserProfile.findOne({ user: req.user.id })
@@ -131,11 +139,11 @@ router.post(
   }
 );
 
-//@route  POST to api/clubs/leave/:id
+//@route  POST to api/clubs/:id/leave
 //@desc   Leave club
 //@access Private
 router.post(
-  '/leave/:id',
+  '/:id/leave',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     UserProfile.findOne({ user: req.user.id }).then(profile => {

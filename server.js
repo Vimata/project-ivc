@@ -6,6 +6,7 @@ const passport = require('passport');
 const users = require('./routes/api/users');
 const profiles = require('./routes/api/profiles');
 const clubs = require('./routes/api/clubs');
+const accounting = require('./routes/api/accounting');
 
 const app = express();
 
@@ -32,6 +33,7 @@ require('./config/passport')(passport);
 app.use('/api/users', users);
 app.use('/api/profiles', profiles);
 app.use('/api/clubs', clubs);
+app.use('/api/club/:id/accounting', accounting);
 
 app.get('/', (req, res) => {
   res.send('Hello there...');
