@@ -148,19 +148,19 @@ const ClubSchema = new Schema({
   securities: [
     {
       buy: {
-        symbol: {
-          type: String,
-          required: true
+        security: {
+          type: Schema.Types.ObjectId,
+          ref: 'security'
         },
         numberOfSharesBought: {
           type: String,
           required: true
         },
         commission: {
-          type: Number
+          type: String
         },
         otherFees: {
-          type: Number
+          type: String
         },
         account: {
           type: Schema.Types.ObjectId,
