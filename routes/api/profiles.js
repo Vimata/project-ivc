@@ -11,7 +11,7 @@ const User = require('../../models/User');
 const UserProfile = require('../../models/UserProfile');
 const Club = require('../../models/Club');
 
-//@route  GET to api/profile/test
+//@route  GET to api/profiles/test
 //@desc   Tests profile route
 //@access Public
 router.get('/test', (req, res) => res.json({ msg: 'Profile Works' }));
@@ -23,14 +23,14 @@ router.get('/user/all', (req, res) => {
   const errors = {};
   UserProfile.find()
     .populate('user', ['name', 'avatar'])
-    .then(profiles => {
+    .then((profiles) => {
       if (!profiles) {
         errors.noprofile = 'There are no club profiles';
         return res.status(404).json(errors);
       }
       res.json(profiles);
     })
-    .catch(err =>
+    .catch((err) =>
       res.status(404).json({ profiles: 'There are no club profiles' })
     );
 });
@@ -43,14 +43,14 @@ router.get('/email/:email', (req, res) => {
 
   Profile.findOne({ email: req.params.email })
     .populate('user', ['name', 'avatar'])
-    .then(profile => {
+    .then((profile) => {
       if (!profile) {
         errors.noprofile = 'There is no profile for this user';
         res.status(404).json(errors);
       }
       res.json(profile);
     })
-    .catch(err => res.status(404).json(err));
+    .catch((err) => res.status(404).json(err));
 });
 
 //@route  GET to api/profile/user/:user_id
@@ -61,14 +61,14 @@ router.get('/user/:user_id', (req, res) => {
 
   UserProfile.findOne({ user: req.params.user_id })
     .populate('user', ['name', 'avatar'])
-    .then(profile => {
+    .then((profile) => {
       if (!profile) {
         errors.noprofile = 'There is no profile for this user';
         res.status(404).json(errors);
       }
       res.json(profile);
     })
-    .catch(err =>
+    .catch((err) =>
       res.status(404).json({ profile: 'There is no profile for this user' })
     );
 });
@@ -105,20 +105,20 @@ router.post(
     if (req.body.linkedin)
       userProfileFields.social.linkedin = req.body.linkedin;
 
-    UserProfile.findOne({ user: req.user.id }).then(profile => {
+    UserProfile.findOne({ user: req.user.id }).then((profile) => {
       if (profile) {
         //Update
         UserProfile.findOneAndUpdate(
           { user: req.user.id },
           { $set: userProfileFields },
           { new: true }
-        ).then(profile => res.json(profile));
+        ).then((profile) => res.json(profile));
       } else {
         //Create
         //Save profile
         new UserProfile(userProfileFields)
           .save()
-          .then(profile => res.json(profile));
+          .then((profile) => res.json(profile));
       }
     });
   }
@@ -137,7 +137,7 @@ router.delete(
           res.json({ success: true })
         );
       })
-      .catch(err => res.status(404).json(err));
+      .catch((err) => res.status(404).json(err));
   }
 );
 module.exports = router;
